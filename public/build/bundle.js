@@ -50,6 +50,12 @@ var app = (function () {
         node.addEventListener(event, handler, options);
         return () => node.removeEventListener(event, handler, options);
     }
+    function attr(node, attribute, value) {
+        if (value == null)
+            node.removeAttribute(attribute);
+        else if (node.getAttribute(attribute) !== value)
+            node.setAttribute(attribute, value);
+    }
     function children(element) {
         return Array.from(element.childNodes);
     }
@@ -281,6 +287,13 @@ var app = (function () {
             dispose();
         };
     }
+    function attr_dev(node, attribute, value) {
+        attr(node, attribute, value);
+        if (value == null)
+            dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
+        else
+            dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+    }
     function set_data_dev(text, data) {
         data = '' + data;
         if (text.wholeText === data)
@@ -316,18 +329,29 @@ var app = (function () {
 
     const file = "src/App.svelte";
 
+    function add_css() {
+    	var style = element("style");
+    	style.id = "svelte-p8iabx-style";
+    	style.textContent = ".inner.svelte-p8iabx.svelte-p8iabx{display:flex;width:100%;height:100vh}.inner.svelte-p8iabx .com.svelte-p8iabx{display:flex;justify-content:center;align-items:center;flex:1}.inner.svelte-p8iabx .me.svelte-p8iabx{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1}.inner.svelte-p8iabx .me .btn-area.svelte-p8iabx{position:absolute;bottom:10vh;left:0;right:0;text-align:center}.game-title.svelte-p8iabx.svelte-p8iabx{position:fixed;top:10vh;left:0;right:0;padding:10px;background:rgba(255,255,255,0.1);font-size:2em;text-align:center;z-index:1}.result.svelte-p8iabx.svelte-p8iabx{position:fixed;top:10vh;left:0;right:0;font-size:20em;text-align:center}.loser.svelte-p8iabx.svelte-p8iabx{background:rgba(255,0,0,0.1)}.winner.svelte-p8iabx.svelte-p8iabx{background:rgba(255,255,0,0.1)}h2.svelte-p8iabx.svelte-p8iabx{font-size:10em}button.svelte-p8iabx.svelte-p8iabx{font-size:5em}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQXBwLnN2ZWx0ZSIsInNvdXJjZXMiOlsiQXBwLnN2ZWx0ZSJdLCJzb3VyY2VzQ29udGVudCI6WyI8ZGl2IGNsYXNzPVwid3JhcHBlclwiPlxuXHQ8aDEgY2xhc3M9XCJnYW1lLXRpdGxlXCI+6rCA7JyE67CU7JyE67O0PC9oMT5cblx0PGgyIGNsYXNzPVwicmVzdWx0XCI+eyByZXN1bHQgfTwvaDI+XG5cdDxkaXYgY2xhc3M9XCJpbm5lclwiPlxuXHRcdDxkaXYgY2xhc3M9XCJjb20gbG9zZXJcIj5cblx0XHRcdDxoMj57IGNvbXB1dGVyIH08L2gyPlxuXHRcdDwvZGl2PlxuXHRcdDxkaXYgY2xhc3M9XCJtZSB3aW5uZXJcIj5cblx0XHRcdDxoMj57IHByaW50IH08L2gyPlxuXHRcdFx0PGRpdiBjbGFzcz1cImJ0bi1hcmVhXCI+IFxuXHRcdFx0XHQ8YnV0dG9uIG9uOmNsaWNrPXsoKSA9PiBTRU5EKCfqsIDsnIQnKX0+4pyM77iPPC9idXR0b24+XG5cdFx0XHRcdDxidXR0b24gb246Y2xpY2s9eygpID0+IFNFTkQoJ+uwlOychCcpfT7inIo8L2J1dHRvbj5cblx0XHRcdFx0PGJ1dHRvbiBvbjpjbGljaz17KCkgPT4gU0VORCgn67O0Jyl9PvCflpA8L2J1dHRvbj5cblx0XHRcdDwvZGl2PlxuXHRcdDwvZGl2PlxuXHQ8L2Rpdj5cbjwvZGl2PlxuXG48c3R5bGU+XG5cdC5pbm5lciB7IGRpc3BsYXk6IGZsZXg7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDEwMHZoOyB9XG5cdC5pbm5lciAuY29tIHsgZGlzcGxheTogZmxleDsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGZsZXg6IDE7IH1cblx0LmlubmVyIC5tZSB7IHBvc2l0aW9uOiByZWxhdGl2ZTsgZGlzcGxheTogZmxleDsgZmxleC1kaXJlY3Rpb246IGNvbHVtbjsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGZsZXg6IDE7IH1cblx0LmlubmVyIC5tZSAuYnRuLWFyZWEgeyBwb3NpdGlvbjogYWJzb2x1dGU7IGJvdHRvbTogMTB2aDsgbGVmdDogMDsgcmlnaHQ6IDA7IHRleHQtYWxpZ246IGNlbnRlcjsgfVxuXHQuZ2FtZS10aXRsZSB7IHBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMHZoOyBsZWZ0OiAwOyByaWdodDogMDsgcGFkZGluZzogMTBweDsgYmFja2dyb3VuZDogcmdiYSgyNTUsMjU1LDI1NSwwLjEpOyBmb250LXNpemU6IDJlbTsgdGV4dC1hbGlnbjogY2VudGVyOyB6LWluZGV4OiAxOyB9XG5cdC5yZXN1bHQgeyBwb3NpdGlvbjogZml4ZWQ7IHRvcDogMTB2aDsgbGVmdDogMDsgcmlnaHQ6IDA7IGZvbnQtc2l6ZTogMjBlbTsgdGV4dC1hbGlnbjogY2VudGVyOyB9XG5cdC5sb3NlciB7IGJhY2tncm91bmQ6IHJnYmEoMjU1LDAsMCwwLjEpOyB9XG5cdC53aW5uZXIgeyBiYWNrZ3JvdW5kOiByZ2JhKDI1NSwyNTUsMCwwLjEpOyB9XG5cdGgyIHsgZm9udC1zaXplOiAxMGVtOyB9XG5cdGJ1dHRvbiB7IGZvbnQtc2l6ZTogNWVtOyB9XG48L3N0eWxlPlxuXG48c2NyaXB0PlxuXHRsZXQgbnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIDMpXG5cdGxldCBjb21wdXRlciA9ICcnXG5cdGxldCBwcmludCA9ICfwn5GAJ1xuXHRsZXQgcmVzdWx0ID0gJydcblxuXHRmdW5jdGlvbiBBQ1RJT04oKSB7XG5cdFx0bnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIDMpXG5cdFx0aWYgKG51bSA9PSAwKSBjb21wdXRlciA9ICfinIzvuI8nXG5cdFx0ZWxzZSBpZiAobnVtID09IDEpIGNvbXB1dGVyID0gJ+Kciidcblx0XHRlbHNlIGlmIChudW0gPT0gMikgY29tcHV0ZXIgPSAn8J+WkCdcblx0fVxuXG5cdGZ1bmN0aW9uIFNFTkQobXkpIHtcblx0XHRjbGVhckludGVydmFsKHRpbWVyKVxuXG5cdFx0aWYgKG15PT0n6rCA7JyEJykgcHJpbnQgPSAn4pyM77iPJ1xuXHRcdGVsc2UgaWYgKG15ID09ICfrsJTsnIQnKSBwcmludCA9ICfinIonXG5cdFx0ZWxzZSBpZiAobXkgPT0gJ+uztCcpIHByaW50ID0gJ/CflpAnXG5cdH1cblxuXHRsZXQgdGltZXIgPSBzZXRJbnRlcnZhbChBQ1RJT04sIDI1MClcbjwvc2NyaXB0PiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFtQkMsTUFBTSw0QkFBQyxDQUFDLEFBQUMsT0FBTyxDQUFFLElBQUksQ0FBRSxLQUFLLENBQUUsSUFBSSxDQUFFLE1BQU0sQ0FBRSxLQUFLLEFBQUUsQ0FBQyxBQUNyRCxvQkFBTSxDQUFDLElBQUksY0FBQyxDQUFDLEFBQUMsT0FBTyxDQUFFLElBQUksQ0FBRSxlQUFlLENBQUUsTUFBTSxDQUFFLFdBQVcsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLENBQUMsQUFBRSxDQUFDLEFBQ3JGLG9CQUFNLENBQUMsR0FBRyxjQUFDLENBQUMsQUFBQyxRQUFRLENBQUUsUUFBUSxDQUFFLE9BQU8sQ0FBRSxJQUFJLENBQUUsY0FBYyxDQUFFLE1BQU0sQ0FBRSxlQUFlLENBQUUsTUFBTSxDQUFFLFdBQVcsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLENBQUMsQUFBRSxDQUFDLEFBQ2hJLG9CQUFNLENBQUMsR0FBRyxDQUFDLFNBQVMsY0FBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLFFBQVEsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxVQUFVLENBQUUsTUFBTSxBQUFFLENBQUMsQUFDakcsV0FBVyw0QkFBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLEtBQUssQ0FBRSxHQUFHLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxPQUFPLENBQUUsSUFBSSxDQUFFLFVBQVUsQ0FBRSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxDQUFFLFNBQVMsQ0FBRSxHQUFHLENBQUUsVUFBVSxDQUFFLE1BQU0sQ0FBRSxPQUFPLENBQUUsQ0FBQyxBQUFFLENBQUMsQUFDaEssT0FBTyw0QkFBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLEtBQUssQ0FBRSxHQUFHLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxTQUFTLENBQUUsSUFBSSxDQUFFLFVBQVUsQ0FBRSxNQUFNLEFBQUUsQ0FBQyxBQUMvRixNQUFNLDRCQUFDLENBQUMsQUFBQyxVQUFVLENBQUUsS0FBSyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsQUFBRSxDQUFDLEFBQ3pDLE9BQU8sNEJBQUMsQ0FBQyxBQUFDLFVBQVUsQ0FBRSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxBQUFFLENBQUMsQUFDNUMsRUFBRSw0QkFBQyxDQUFDLEFBQUMsU0FBUyxDQUFFLElBQUksQUFBRSxDQUFDLEFBQ3ZCLE1BQU0sNEJBQUMsQ0FBQyxBQUFDLFNBQVMsQ0FBRSxHQUFHLEFBQUUsQ0FBQyJ9 */";
+    	append_dev(document.head, style);
+    }
+
     function create_fragment(ctx) {
-    	let div;
+    	let div4;
     	let h1;
     	let t1;
     	let h20;
-    	let t2;
     	let t3;
+    	let div3;
+    	let div0;
     	let h21;
     	let t4;
     	let t5;
+    	let div2;
     	let h22;
+    	let t6;
     	let t7;
+    	let div1;
     	let button0;
     	let t9;
     	let button1;
@@ -338,56 +362,80 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			div4 = element("div");
     			h1 = element("h1");
-    			h1.textContent = "가위바위보!";
+    			h1.textContent = "가위바위보";
     			t1 = space();
     			h20 = element("h2");
-    			t2 = text(/*computer*/ ctx[0]);
+    			h20.textContent = `${/*result*/ ctx[2]}`;
     			t3 = space();
+    			div3 = element("div");
+    			div0 = element("div");
     			h21 = element("h2");
-    			t4 = text(/*print*/ ctx[1]);
+    			t4 = text(/*computer*/ ctx[0]);
     			t5 = space();
+    			div2 = element("div");
     			h22 = element("h2");
-    			h22.textContent = `${/*result*/ ctx[2]}`;
+    			t6 = text(/*print*/ ctx[1]);
     			t7 = space();
+    			div1 = element("div");
     			button0 = element("button");
-    			button0.textContent = "가위";
+    			button0.textContent = "✌️";
     			t9 = space();
     			button1 = element("button");
-    			button1.textContent = "바위";
+    			button1.textContent = "✊";
     			t11 = space();
     			button2 = element("button");
-    			button2.textContent = "보";
-    			add_location(h1, file, 1, 1, 7);
-    			add_location(h20, file, 3, 1, 25);
-    			add_location(h21, file, 4, 1, 48);
-    			add_location(h22, file, 5, 1, 68);
-    			add_location(button0, file, 7, 1, 90);
-    			add_location(button1, file, 8, 1, 139);
-    			add_location(button2, file, 9, 1, 188);
-    			add_location(div, file, 0, 0, 0);
+    			button2.textContent = "🖐";
+    			attr_dev(h1, "class", "game-title svelte-p8iabx");
+    			add_location(h1, file, 1, 1, 23);
+    			attr_dev(h20, "class", "result svelte-p8iabx");
+    			add_location(h20, file, 2, 1, 58);
+    			attr_dev(h21, "class", "svelte-p8iabx");
+    			add_location(h21, file, 5, 3, 143);
+    			attr_dev(div0, "class", "com loser svelte-p8iabx");
+    			add_location(div0, file, 4, 2, 116);
+    			attr_dev(h22, "class", "svelte-p8iabx");
+    			add_location(h22, file, 8, 3, 203);
+    			attr_dev(button0, "class", "svelte-p8iabx");
+    			add_location(button0, file, 10, 4, 253);
+    			attr_dev(button1, "class", "svelte-p8iabx");
+    			add_location(button1, file, 11, 4, 305);
+    			attr_dev(button2, "class", "svelte-p8iabx");
+    			add_location(button2, file, 12, 4, 356);
+    			attr_dev(div1, "class", "btn-area svelte-p8iabx");
+    			add_location(div1, file, 9, 3, 225);
+    			attr_dev(div2, "class", "me winner svelte-p8iabx");
+    			add_location(div2, file, 7, 2, 176);
+    			attr_dev(div3, "class", "inner svelte-p8iabx");
+    			add_location(div3, file, 3, 1, 94);
+    			attr_dev(div4, "class", "wrapper");
+    			add_location(div4, file, 0, 0, 0);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, h1);
-    			append_dev(div, t1);
-    			append_dev(div, h20);
-    			append_dev(h20, t2);
-    			append_dev(div, t3);
-    			append_dev(div, h21);
+    			insert_dev(target, div4, anchor);
+    			append_dev(div4, h1);
+    			append_dev(div4, t1);
+    			append_dev(div4, h20);
+    			append_dev(div4, t3);
+    			append_dev(div4, div3);
+    			append_dev(div3, div0);
+    			append_dev(div0, h21);
     			append_dev(h21, t4);
-    			append_dev(div, t5);
-    			append_dev(div, h22);
-    			append_dev(div, t7);
-    			append_dev(div, button0);
-    			append_dev(div, t9);
-    			append_dev(div, button1);
-    			append_dev(div, t11);
-    			append_dev(div, button2);
+    			append_dev(div3, t5);
+    			append_dev(div3, div2);
+    			append_dev(div2, h22);
+    			append_dev(h22, t6);
+    			append_dev(div2, t7);
+    			append_dev(div2, div1);
+    			append_dev(div1, button0);
+    			append_dev(div1, t9);
+    			append_dev(div1, button1);
+    			append_dev(div1, t11);
+    			append_dev(div1, button2);
 
     			if (!mounted) {
     				dispose = [
@@ -400,13 +448,13 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*computer*/ 1) set_data_dev(t2, /*computer*/ ctx[0]);
-    			if (dirty & /*print*/ 2) set_data_dev(t4, /*print*/ ctx[1]);
+    			if (dirty & /*computer*/ 1) set_data_dev(t4, /*computer*/ ctx[0]);
+    			if (dirty & /*print*/ 2) set_data_dev(t6, /*print*/ ctx[1]);
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div4);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -428,17 +476,17 @@ var app = (function () {
     	validate_slots("App", slots, []);
     	let num = parseInt(Math.random() * 3);
     	let computer = "";
-    	let print = "";
+    	let print = "👀";
     	let result = "";
 
     	function ACTION() {
     		num = parseInt(Math.random() * 3);
-    		if (num == 0) $$invalidate(0, computer = "가위"); else if (num == 1) $$invalidate(0, computer = "바위"); else if (num == 2) $$invalidate(0, computer = "보");
+    		if (num == 0) $$invalidate(0, computer = "✌️"); else if (num == 1) $$invalidate(0, computer = "✊"); else if (num == 2) $$invalidate(0, computer = "🖐");
     	}
 
     	function SEND(my) {
     		clearInterval(timer);
-    		$$invalidate(1, print = my);
+    		if (my == "가위") $$invalidate(1, print = "✌️"); else if (my == "바위") $$invalidate(1, print = "✊"); else if (my == "보") $$invalidate(1, print = "🖐");
     	}
 
     	let timer = setInterval(ACTION, 250);
@@ -480,6 +528,7 @@ var app = (function () {
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
+    		if (!document.getElementById("svelte-p8iabx-style")) add_css();
     		init(this, options, instance, create_fragment, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
