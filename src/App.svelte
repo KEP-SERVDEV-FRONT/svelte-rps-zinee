@@ -34,12 +34,13 @@
 	let computer = ''
 	let print = '👀'
 	let result = ''
+	let username = '지니'
 
 	function ACTION() {
 		num = parseInt(Math.random() * 3)
-		if (num == 0) computer = '✌️'
-		else if (num == 1) computer = '✊'
-		else if (num == 2) computer = '🖐'
+		if (num == 0) computer = '가위'
+		else if (num == 1) computer = '바위'
+		else if (num == 2) computer = '보'
 	}
 
 	function SEND(my) {
@@ -48,6 +49,20 @@
 		if (my=='가위') print = '✌️'
 		else if (my == '바위') print = '✊'
 		else if (my == '보') print = '🖐'
+
+		judgment(my);
+	}
+
+	function judgment(my) {
+		if (computer == my) result = '비김!'
+
+		else if (computer=='가위' && my=='바위') { result = username+'승!' }
+		else if (computer=='바위' && my=='보') { result = username+'승!' }
+		else if (computer=='보' && my=='가위') { result = username+'승!' }
+
+		else if (computer=='가위' && my=='보') { result = username+'패!' }
+		else if (computer=='바위' && my=='가위') { result = username+'패!' }
+		else if (computer=='보' && my=='바위') { result = username+'패!' }
 	}
 
 	let timer = setInterval(ACTION, 250)

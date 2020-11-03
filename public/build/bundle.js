@@ -332,7 +332,7 @@ var app = (function () {
     function add_css() {
     	var style = element("style");
     	style.id = "svelte-p8iabx-style";
-    	style.textContent = ".inner.svelte-p8iabx.svelte-p8iabx{display:flex;width:100%;height:100vh}.inner.svelte-p8iabx .com.svelte-p8iabx{display:flex;justify-content:center;align-items:center;flex:1}.inner.svelte-p8iabx .me.svelte-p8iabx{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1}.inner.svelte-p8iabx .me .btn-area.svelte-p8iabx{position:absolute;bottom:10vh;left:0;right:0;text-align:center}.game-title.svelte-p8iabx.svelte-p8iabx{position:fixed;top:10vh;left:0;right:0;padding:10px;background:rgba(255,255,255,0.1);font-size:2em;text-align:center;z-index:1}.result.svelte-p8iabx.svelte-p8iabx{position:fixed;top:10vh;left:0;right:0;font-size:20em;text-align:center}.loser.svelte-p8iabx.svelte-p8iabx{background:rgba(255,0,0,0.1)}.winner.svelte-p8iabx.svelte-p8iabx{background:rgba(255,255,0,0.1)}h2.svelte-p8iabx.svelte-p8iabx{font-size:10em}button.svelte-p8iabx.svelte-p8iabx{font-size:5em}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQXBwLnN2ZWx0ZSIsInNvdXJjZXMiOlsiQXBwLnN2ZWx0ZSJdLCJzb3VyY2VzQ29udGVudCI6WyI8ZGl2IGNsYXNzPVwid3JhcHBlclwiPlxuXHQ8aDEgY2xhc3M9XCJnYW1lLXRpdGxlXCI+6rCA7JyE67CU7JyE67O0PC9oMT5cblx0PGgyIGNsYXNzPVwicmVzdWx0XCI+eyByZXN1bHQgfTwvaDI+XG5cdDxkaXYgY2xhc3M9XCJpbm5lclwiPlxuXHRcdDxkaXYgY2xhc3M9XCJjb20gbG9zZXJcIj5cblx0XHRcdDxoMj57IGNvbXB1dGVyIH08L2gyPlxuXHRcdDwvZGl2PlxuXHRcdDxkaXYgY2xhc3M9XCJtZSB3aW5uZXJcIj5cblx0XHRcdDxoMj57IHByaW50IH08L2gyPlxuXHRcdFx0PGRpdiBjbGFzcz1cImJ0bi1hcmVhXCI+IFxuXHRcdFx0XHQ8YnV0dG9uIG9uOmNsaWNrPXsoKSA9PiBTRU5EKCfqsIDsnIQnKX0+4pyM77iPPC9idXR0b24+XG5cdFx0XHRcdDxidXR0b24gb246Y2xpY2s9eygpID0+IFNFTkQoJ+uwlOychCcpfT7inIo8L2J1dHRvbj5cblx0XHRcdFx0PGJ1dHRvbiBvbjpjbGljaz17KCkgPT4gU0VORCgn67O0Jyl9PvCflpA8L2J1dHRvbj5cblx0XHRcdDwvZGl2PlxuXHRcdDwvZGl2PlxuXHQ8L2Rpdj5cbjwvZGl2PlxuXG48c3R5bGU+XG5cdC5pbm5lciB7IGRpc3BsYXk6IGZsZXg7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDEwMHZoOyB9XG5cdC5pbm5lciAuY29tIHsgZGlzcGxheTogZmxleDsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGZsZXg6IDE7IH1cblx0LmlubmVyIC5tZSB7IHBvc2l0aW9uOiByZWxhdGl2ZTsgZGlzcGxheTogZmxleDsgZmxleC1kaXJlY3Rpb246IGNvbHVtbjsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGZsZXg6IDE7IH1cblx0LmlubmVyIC5tZSAuYnRuLWFyZWEgeyBwb3NpdGlvbjogYWJzb2x1dGU7IGJvdHRvbTogMTB2aDsgbGVmdDogMDsgcmlnaHQ6IDA7IHRleHQtYWxpZ246IGNlbnRlcjsgfVxuXHQuZ2FtZS10aXRsZSB7IHBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMHZoOyBsZWZ0OiAwOyByaWdodDogMDsgcGFkZGluZzogMTBweDsgYmFja2dyb3VuZDogcmdiYSgyNTUsMjU1LDI1NSwwLjEpOyBmb250LXNpemU6IDJlbTsgdGV4dC1hbGlnbjogY2VudGVyOyB6LWluZGV4OiAxOyB9XG5cdC5yZXN1bHQgeyBwb3NpdGlvbjogZml4ZWQ7IHRvcDogMTB2aDsgbGVmdDogMDsgcmlnaHQ6IDA7IGZvbnQtc2l6ZTogMjBlbTsgdGV4dC1hbGlnbjogY2VudGVyOyB9XG5cdC5sb3NlciB7IGJhY2tncm91bmQ6IHJnYmEoMjU1LDAsMCwwLjEpOyB9XG5cdC53aW5uZXIgeyBiYWNrZ3JvdW5kOiByZ2JhKDI1NSwyNTUsMCwwLjEpOyB9XG5cdGgyIHsgZm9udC1zaXplOiAxMGVtOyB9XG5cdGJ1dHRvbiB7IGZvbnQtc2l6ZTogNWVtOyB9XG48L3N0eWxlPlxuXG48c2NyaXB0PlxuXHRsZXQgbnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIDMpXG5cdGxldCBjb21wdXRlciA9ICcnXG5cdGxldCBwcmludCA9ICfwn5GAJ1xuXHRsZXQgcmVzdWx0ID0gJydcblxuXHRmdW5jdGlvbiBBQ1RJT04oKSB7XG5cdFx0bnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIDMpXG5cdFx0aWYgKG51bSA9PSAwKSBjb21wdXRlciA9ICfinIzvuI8nXG5cdFx0ZWxzZSBpZiAobnVtID09IDEpIGNvbXB1dGVyID0gJ+Kciidcblx0XHRlbHNlIGlmIChudW0gPT0gMikgY29tcHV0ZXIgPSAn8J+WkCdcblx0fVxuXG5cdGZ1bmN0aW9uIFNFTkQobXkpIHtcblx0XHRjbGVhckludGVydmFsKHRpbWVyKVxuXG5cdFx0aWYgKG15PT0n6rCA7JyEJykgcHJpbnQgPSAn4pyM77iPJ1xuXHRcdGVsc2UgaWYgKG15ID09ICfrsJTsnIQnKSBwcmludCA9ICfinIonXG5cdFx0ZWxzZSBpZiAobXkgPT0gJ+uztCcpIHByaW50ID0gJ/CflpAnXG5cdH1cblxuXHRsZXQgdGltZXIgPSBzZXRJbnRlcnZhbChBQ1RJT04sIDI1MClcbjwvc2NyaXB0PiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFtQkMsTUFBTSw0QkFBQyxDQUFDLEFBQUMsT0FBTyxDQUFFLElBQUksQ0FBRSxLQUFLLENBQUUsSUFBSSxDQUFFLE1BQU0sQ0FBRSxLQUFLLEFBQUUsQ0FBQyxBQUNyRCxvQkFBTSxDQUFDLElBQUksY0FBQyxDQUFDLEFBQUMsT0FBTyxDQUFFLElBQUksQ0FBRSxlQUFlLENBQUUsTUFBTSxDQUFFLFdBQVcsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLENBQUMsQUFBRSxDQUFDLEFBQ3JGLG9CQUFNLENBQUMsR0FBRyxjQUFDLENBQUMsQUFBQyxRQUFRLENBQUUsUUFBUSxDQUFFLE9BQU8sQ0FBRSxJQUFJLENBQUUsY0FBYyxDQUFFLE1BQU0sQ0FBRSxlQUFlLENBQUUsTUFBTSxDQUFFLFdBQVcsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLENBQUMsQUFBRSxDQUFDLEFBQ2hJLG9CQUFNLENBQUMsR0FBRyxDQUFDLFNBQVMsY0FBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLFFBQVEsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxVQUFVLENBQUUsTUFBTSxBQUFFLENBQUMsQUFDakcsV0FBVyw0QkFBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLEtBQUssQ0FBRSxHQUFHLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxPQUFPLENBQUUsSUFBSSxDQUFFLFVBQVUsQ0FBRSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxDQUFFLFNBQVMsQ0FBRSxHQUFHLENBQUUsVUFBVSxDQUFFLE1BQU0sQ0FBRSxPQUFPLENBQUUsQ0FBQyxBQUFFLENBQUMsQUFDaEssT0FBTyw0QkFBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLEtBQUssQ0FBRSxHQUFHLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxTQUFTLENBQUUsSUFBSSxDQUFFLFVBQVUsQ0FBRSxNQUFNLEFBQUUsQ0FBQyxBQUMvRixNQUFNLDRCQUFDLENBQUMsQUFBQyxVQUFVLENBQUUsS0FBSyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsQUFBRSxDQUFDLEFBQ3pDLE9BQU8sNEJBQUMsQ0FBQyxBQUFDLFVBQVUsQ0FBRSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxBQUFFLENBQUMsQUFDNUMsRUFBRSw0QkFBQyxDQUFDLEFBQUMsU0FBUyxDQUFFLElBQUksQUFBRSxDQUFDLEFBQ3ZCLE1BQU0sNEJBQUMsQ0FBQyxBQUFDLFNBQVMsQ0FBRSxHQUFHLEFBQUUsQ0FBQyJ9 */";
+    	style.textContent = ".inner.svelte-p8iabx.svelte-p8iabx{display:flex;width:100%;height:100vh}.inner.svelte-p8iabx .com.svelte-p8iabx{display:flex;justify-content:center;align-items:center;flex:1}.inner.svelte-p8iabx .me.svelte-p8iabx{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1}.inner.svelte-p8iabx .me .btn-area.svelte-p8iabx{position:absolute;bottom:10vh;left:0;right:0;text-align:center}.game-title.svelte-p8iabx.svelte-p8iabx{position:fixed;top:10vh;left:0;right:0;padding:10px;background:rgba(255,255,255,0.1);font-size:2em;text-align:center;z-index:1}.result.svelte-p8iabx.svelte-p8iabx{position:fixed;top:10vh;left:0;right:0;font-size:20em;text-align:center}.loser.svelte-p8iabx.svelte-p8iabx{background:rgba(255,0,0,0.1)}.winner.svelte-p8iabx.svelte-p8iabx{background:rgba(255,255,0,0.1)}h2.svelte-p8iabx.svelte-p8iabx{font-size:10em}button.svelte-p8iabx.svelte-p8iabx{font-size:5em}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQXBwLnN2ZWx0ZSIsInNvdXJjZXMiOlsiQXBwLnN2ZWx0ZSJdLCJzb3VyY2VzQ29udGVudCI6WyI8ZGl2IGNsYXNzPVwid3JhcHBlclwiPlxuXHQ8aDEgY2xhc3M9XCJnYW1lLXRpdGxlXCI+6rCA7JyE67CU7JyE67O0PC9oMT5cblx0PGgyIGNsYXNzPVwicmVzdWx0XCI+eyByZXN1bHQgfTwvaDI+XG5cdDxkaXYgY2xhc3M9XCJpbm5lclwiPlxuXHRcdDxkaXYgY2xhc3M9XCJjb20gbG9zZXJcIj5cblx0XHRcdDxoMj57IGNvbXB1dGVyIH08L2gyPlxuXHRcdDwvZGl2PlxuXHRcdDxkaXYgY2xhc3M9XCJtZSB3aW5uZXJcIj5cblx0XHRcdDxoMj57IHByaW50IH08L2gyPlxuXHRcdFx0PGRpdiBjbGFzcz1cImJ0bi1hcmVhXCI+IFxuXHRcdFx0XHQ8YnV0dG9uIG9uOmNsaWNrPXsoKSA9PiBTRU5EKCfqsIDsnIQnKX0+4pyM77iPPC9idXR0b24+XG5cdFx0XHRcdDxidXR0b24gb246Y2xpY2s9eygpID0+IFNFTkQoJ+uwlOychCcpfT7inIo8L2J1dHRvbj5cblx0XHRcdFx0PGJ1dHRvbiBvbjpjbGljaz17KCkgPT4gU0VORCgn67O0Jyl9PvCflpA8L2J1dHRvbj5cblx0XHRcdDwvZGl2PlxuXHRcdDwvZGl2PlxuXHQ8L2Rpdj5cbjwvZGl2PlxuXG48c3R5bGU+XG5cdC5pbm5lciB7IGRpc3BsYXk6IGZsZXg7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDEwMHZoOyB9XG5cdC5pbm5lciAuY29tIHsgZGlzcGxheTogZmxleDsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGZsZXg6IDE7IH1cblx0LmlubmVyIC5tZSB7IHBvc2l0aW9uOiByZWxhdGl2ZTsgZGlzcGxheTogZmxleDsgZmxleC1kaXJlY3Rpb246IGNvbHVtbjsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGZsZXg6IDE7IH1cblx0LmlubmVyIC5tZSAuYnRuLWFyZWEgeyBwb3NpdGlvbjogYWJzb2x1dGU7IGJvdHRvbTogMTB2aDsgbGVmdDogMDsgcmlnaHQ6IDA7IHRleHQtYWxpZ246IGNlbnRlcjsgfVxuXHQuZ2FtZS10aXRsZSB7IHBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMHZoOyBsZWZ0OiAwOyByaWdodDogMDsgcGFkZGluZzogMTBweDsgYmFja2dyb3VuZDogcmdiYSgyNTUsMjU1LDI1NSwwLjEpOyBmb250LXNpemU6IDJlbTsgdGV4dC1hbGlnbjogY2VudGVyOyB6LWluZGV4OiAxOyB9XG5cdC5yZXN1bHQgeyBwb3NpdGlvbjogZml4ZWQ7IHRvcDogMTB2aDsgbGVmdDogMDsgcmlnaHQ6IDA7IGZvbnQtc2l6ZTogMjBlbTsgdGV4dC1hbGlnbjogY2VudGVyOyB9XG5cdC5sb3NlciB7IGJhY2tncm91bmQ6IHJnYmEoMjU1LDAsMCwwLjEpOyB9XG5cdC53aW5uZXIgeyBiYWNrZ3JvdW5kOiByZ2JhKDI1NSwyNTUsMCwwLjEpOyB9XG5cdGgyIHsgZm9udC1zaXplOiAxMGVtOyB9XG5cdGJ1dHRvbiB7IGZvbnQtc2l6ZTogNWVtOyB9XG48L3N0eWxlPlxuXG48c2NyaXB0PlxuXHRsZXQgbnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIDMpXG5cdGxldCBjb21wdXRlciA9ICcnXG5cdGxldCBwcmludCA9ICfwn5GAJ1xuXHRsZXQgcmVzdWx0ID0gJydcblx0bGV0IHVzZXJuYW1lID0gJ+yngOuLiCdcblxuXHRmdW5jdGlvbiBBQ1RJT04oKSB7XG5cdFx0bnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIDMpXG5cdFx0aWYgKG51bSA9PSAwKSBjb21wdXRlciA9ICfqsIDsnIQnXG5cdFx0ZWxzZSBpZiAobnVtID09IDEpIGNvbXB1dGVyID0gJ+uwlOychCdcblx0XHRlbHNlIGlmIChudW0gPT0gMikgY29tcHV0ZXIgPSAn67O0J1xuXHR9XG5cblx0ZnVuY3Rpb24gU0VORChteSkge1xuXHRcdGNsZWFySW50ZXJ2YWwodGltZXIpXG5cblx0XHRpZiAobXk9PSfqsIDsnIQnKSBwcmludCA9ICfinIzvuI8nXG5cdFx0ZWxzZSBpZiAobXkgPT0gJ+uwlOychCcpIHByaW50ID0gJ+Kciidcblx0XHRlbHNlIGlmIChteSA9PSAn67O0JykgcHJpbnQgPSAn8J+WkCdcblxuXHRcdGp1ZGdtZW50KG15KTtcblx0fVxuXG5cdGZ1bmN0aW9uIGp1ZGdtZW50KG15KSB7XG5cdFx0aWYgKGNvbXB1dGVyID09IG15KSByZXN1bHQgPSAn67mE6rmAISdcblxuXHRcdGVsc2UgaWYgKGNvbXB1dGVyPT0n6rCA7JyEJyAmJiBteT09J+uwlOychCcpIHsgcmVzdWx0ID0gdXNlcm5hbWUrJ+yKuSEnIH1cblx0XHRlbHNlIGlmIChjb21wdXRlcj09J+uwlOychCcgJiYgbXk9PSfrs7QnKSB7IHJlc3VsdCA9IHVzZXJuYW1lKyfsirkhJyB9XG5cdFx0ZWxzZSBpZiAoY29tcHV0ZXI9PSfrs7QnICYmIG15PT0n6rCA7JyEJykgeyByZXN1bHQgPSB1c2VybmFtZSsn7Iq5IScgfVxuXG5cdFx0ZWxzZSBpZiAoY29tcHV0ZXI9PSfqsIDsnIQnICYmIG15PT0n67O0JykgeyByZXN1bHQgPSB1c2VybmFtZSsn7YyoIScgfVxuXHRcdGVsc2UgaWYgKGNvbXB1dGVyPT0n67CU7JyEJyAmJiBteT09J+qwgOychCcpIHsgcmVzdWx0ID0gdXNlcm5hbWUrJ+2MqCEnIH1cblx0XHRlbHNlIGlmIChjb21wdXRlcj09J+uztCcgJiYgbXk9PSfrsJTsnIQnKSB7IHJlc3VsdCA9IHVzZXJuYW1lKyftjKghJyB9XG5cdH1cblxuXHRsZXQgdGltZXIgPSBzZXRJbnRlcnZhbChBQ1RJT04sIDI1MClcbjwvc2NyaXB0PiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFtQkMsTUFBTSw0QkFBQyxDQUFDLEFBQUMsT0FBTyxDQUFFLElBQUksQ0FBRSxLQUFLLENBQUUsSUFBSSxDQUFFLE1BQU0sQ0FBRSxLQUFLLEFBQUUsQ0FBQyxBQUNyRCxvQkFBTSxDQUFDLElBQUksY0FBQyxDQUFDLEFBQUMsT0FBTyxDQUFFLElBQUksQ0FBRSxlQUFlLENBQUUsTUFBTSxDQUFFLFdBQVcsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLENBQUMsQUFBRSxDQUFDLEFBQ3JGLG9CQUFNLENBQUMsR0FBRyxjQUFDLENBQUMsQUFBQyxRQUFRLENBQUUsUUFBUSxDQUFFLE9BQU8sQ0FBRSxJQUFJLENBQUUsY0FBYyxDQUFFLE1BQU0sQ0FBRSxlQUFlLENBQUUsTUFBTSxDQUFFLFdBQVcsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLENBQUMsQUFBRSxDQUFDLEFBQ2hJLG9CQUFNLENBQUMsR0FBRyxDQUFDLFNBQVMsY0FBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLFFBQVEsQ0FBRSxNQUFNLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxVQUFVLENBQUUsTUFBTSxBQUFFLENBQUMsQUFDakcsV0FBVyw0QkFBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLEtBQUssQ0FBRSxHQUFHLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxPQUFPLENBQUUsSUFBSSxDQUFFLFVBQVUsQ0FBRSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxDQUFFLFNBQVMsQ0FBRSxHQUFHLENBQUUsVUFBVSxDQUFFLE1BQU0sQ0FBRSxPQUFPLENBQUUsQ0FBQyxBQUFFLENBQUMsQUFDaEssT0FBTyw0QkFBQyxDQUFDLEFBQUMsUUFBUSxDQUFFLEtBQUssQ0FBRSxHQUFHLENBQUUsSUFBSSxDQUFFLElBQUksQ0FBRSxDQUFDLENBQUUsS0FBSyxDQUFFLENBQUMsQ0FBRSxTQUFTLENBQUUsSUFBSSxDQUFFLFVBQVUsQ0FBRSxNQUFNLEFBQUUsQ0FBQyxBQUMvRixNQUFNLDRCQUFDLENBQUMsQUFBQyxVQUFVLENBQUUsS0FBSyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsQUFBRSxDQUFDLEFBQ3pDLE9BQU8sNEJBQUMsQ0FBQyxBQUFDLFVBQVUsQ0FBRSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxBQUFFLENBQUMsQUFDNUMsRUFBRSw0QkFBQyxDQUFDLEFBQUMsU0FBUyxDQUFFLElBQUksQUFBRSxDQUFDLEFBQ3ZCLE1BQU0sNEJBQUMsQ0FBQyxBQUFDLFNBQVMsQ0FBRSxHQUFHLEFBQUUsQ0FBQyJ9 */";
     	append_dev(document.head, style);
     }
 
@@ -341,6 +341,7 @@ var app = (function () {
     	let h1;
     	let t1;
     	let h20;
+    	let t2;
     	let t3;
     	let div3;
     	let div0;
@@ -367,7 +368,7 @@ var app = (function () {
     			h1.textContent = "가위바위보";
     			t1 = space();
     			h20 = element("h2");
-    			h20.textContent = `${/*result*/ ctx[2]}`;
+    			t2 = text(/*result*/ ctx[2]);
     			t3 = space();
     			div3 = element("div");
     			div0 = element("div");
@@ -420,6 +421,7 @@ var app = (function () {
     			append_dev(div4, h1);
     			append_dev(div4, t1);
     			append_dev(div4, h20);
+    			append_dev(h20, t2);
     			append_dev(div4, t3);
     			append_dev(div4, div3);
     			append_dev(div3, div0);
@@ -448,6 +450,7 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
+    			if (dirty & /*result*/ 4) set_data_dev(t2, /*result*/ ctx[2]);
     			if (dirty & /*computer*/ 1) set_data_dev(t4, /*computer*/ ctx[0]);
     			if (dirty & /*print*/ 2) set_data_dev(t6, /*print*/ ctx[1]);
     		},
@@ -478,15 +481,33 @@ var app = (function () {
     	let computer = "";
     	let print = "👀";
     	let result = "";
+    	let username = "지니";
 
     	function ACTION() {
     		num = parseInt(Math.random() * 3);
-    		if (num == 0) $$invalidate(0, computer = "✌️"); else if (num == 1) $$invalidate(0, computer = "✊"); else if (num == 2) $$invalidate(0, computer = "🖐");
+    		if (num == 0) $$invalidate(0, computer = "가위"); else if (num == 1) $$invalidate(0, computer = "바위"); else if (num == 2) $$invalidate(0, computer = "보");
     	}
 
     	function SEND(my) {
     		clearInterval(timer);
     		if (my == "가위") $$invalidate(1, print = "✌️"); else if (my == "바위") $$invalidate(1, print = "✊"); else if (my == "보") $$invalidate(1, print = "🖐");
+    		judgment(my);
+    	}
+
+    	function judgment(my) {
+    		if (computer == my) $$invalidate(2, result = "비김!"); else if (computer == "가위" && my == "바위") {
+    			$$invalidate(2, result = username + "승!");
+    		} else if (computer == "바위" && my == "보") {
+    			$$invalidate(2, result = username + "승!");
+    		} else if (computer == "보" && my == "가위") {
+    			$$invalidate(2, result = username + "승!");
+    		} else if (computer == "가위" && my == "보") {
+    			$$invalidate(2, result = username + "패!");
+    		} else if (computer == "바위" && my == "가위") {
+    			$$invalidate(2, result = username + "패!");
+    		} else if (computer == "보" && my == "바위") {
+    			$$invalidate(2, result = username + "패!");
+    		}
     	}
 
     	let timer = setInterval(ACTION, 250);
@@ -505,8 +526,10 @@ var app = (function () {
     		computer,
     		print,
     		result,
+    		username,
     		ACTION,
     		SEND,
+    		judgment,
     		timer
     	});
 
@@ -515,6 +538,7 @@ var app = (function () {
     		if ("computer" in $$props) $$invalidate(0, computer = $$props.computer);
     		if ("print" in $$props) $$invalidate(1, print = $$props.print);
     		if ("result" in $$props) $$invalidate(2, result = $$props.result);
+    		if ("username" in $$props) username = $$props.username;
     		if ("timer" in $$props) timer = $$props.timer;
     	};
 
