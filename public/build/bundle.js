@@ -37,17 +37,15 @@ var app = (function () {
     function detach(node) {
         node.parentNode.removeChild(node);
     }
-    function destroy_each(iterations, detaching) {
-        for (let i = 0; i < iterations.length; i += 1) {
-            if (iterations[i])
-                iterations[i].d(detaching);
-        }
-    }
     function element(name) {
         return document.createElement(name);
     }
     function text(data) {
         return document.createTextNode(data);
+    }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
     }
     function attr(node, attribute, value) {
         if (value == null)
@@ -57,6 +55,9 @@ var app = (function () {
     }
     function children(element) {
         return Array.from(element.childNodes);
+    }
+    function toggle_class(element, name, toggle) {
+        element.classList[toggle ? 'add' : 'remove'](name);
     }
     function custom_event(type, detail) {
         const e = document.createEvent('CustomEvent');
@@ -154,6 +155,102 @@ var app = (function () {
                 }
             });
             block.o(local);
+        }
+    }
+
+    const globals = (typeof window !== 'undefined'
+        ? window
+        : typeof globalThis !== 'undefined'
+            ? globalThis
+            : global);
+
+    function destroy_block(block, lookup) {
+        block.d(1);
+        lookup.delete(block.key);
+    }
+    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
+        let o = old_blocks.length;
+        let n = list.length;
+        let i = o;
+        const old_indexes = {};
+        while (i--)
+            old_indexes[old_blocks[i].key] = i;
+        const new_blocks = [];
+        const new_lookup = new Map();
+        const deltas = new Map();
+        i = n;
+        while (i--) {
+            const child_ctx = get_context(ctx, list, i);
+            const key = get_key(child_ctx);
+            let block = lookup.get(key);
+            if (!block) {
+                block = create_each_block(key, child_ctx);
+                block.c();
+            }
+            else if (dynamic) {
+                block.p(child_ctx, dirty);
+            }
+            new_lookup.set(key, new_blocks[i] = block);
+            if (key in old_indexes)
+                deltas.set(key, Math.abs(i - old_indexes[key]));
+        }
+        const will_move = new Set();
+        const did_move = new Set();
+        function insert(block) {
+            transition_in(block, 1);
+            block.m(node, next);
+            lookup.set(block.key, block);
+            next = block.first;
+            n--;
+        }
+        while (o && n) {
+            const new_block = new_blocks[n - 1];
+            const old_block = old_blocks[o - 1];
+            const new_key = new_block.key;
+            const old_key = old_block.key;
+            if (new_block === old_block) {
+                // do nothing
+                next = new_block.first;
+                o--;
+                n--;
+            }
+            else if (!new_lookup.has(old_key)) {
+                // remove old block
+                destroy(old_block, lookup);
+                o--;
+            }
+            else if (!lookup.has(new_key) || will_move.has(new_key)) {
+                insert(new_block);
+            }
+            else if (did_move.has(old_key)) {
+                o--;
+            }
+            else if (deltas.get(new_key) > deltas.get(old_key)) {
+                did_move.add(new_key);
+                insert(new_block);
+            }
+            else {
+                will_move.add(old_key);
+                o--;
+            }
+        }
+        while (o--) {
+            const old_block = old_blocks[o];
+            if (!new_lookup.has(old_block.key))
+                destroy(old_block, lookup);
+        }
+        while (n)
+            insert(new_blocks[n - 1]);
+        return new_blocks;
+    }
+    function validate_each_keys(ctx, list, get_context, get_key) {
+        const keys = new Set();
+        for (let i = 0; i < list.length; i++) {
+            const key = get_key(get_context(ctx, list, i));
+            if (keys.has(key)) {
+                throw new Error('Cannot have duplicate keys in a keyed each');
+            }
+            keys.add(key);
         }
     }
     function create_component(block) {
@@ -293,6 +390,19 @@ var app = (function () {
         dispatch_dev('SvelteDOMRemove', { node });
         detach(node);
     }
+    function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation) {
+        const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
+        if (has_prevent_default)
+            modifiers.push('preventDefault');
+        if (has_stop_propagation)
+            modifiers.push('stopPropagation');
+        dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
+        const dispose = listen(node, event, handler, options);
+        return () => {
+            dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
+            dispose();
+        };
+    }
     function attr_dev(node, attribute, value) {
         attr(node, attribute, value);
         if (value == null)
@@ -342,49 +452,73 @@ var app = (function () {
 
     /* src/components/matching-cards/Matching-Cards.svelte generated by Svelte v3.29.4 */
 
+    const { console: console_1, document: document_1 } = globals;
     const file = "src/components/matching-cards/Matching-Cards.svelte";
 
     function add_css() {
     	var style = element("style");
-    	style.id = "svelte-1e182cq-style";
-    	style.textContent = ".container.svelte-1e182cq{display:flex;flex-direction:column;min-height:100vh}.card-wrap.svelte-1e182cq{display:flex;flex-wrap:wrap;justify-content:space-between;margin:auto;width:50vw;height:50vh}.card-item.svelte-1e182cq{display:flex;justify-content:center;align-items:center;display:flex;width:calc(25% - 5px);height:calc(50% - 10px);background-color:#222;font-size:20px;color:#fff;cursor:pointer}.card-item.svelte-1e182cq:hover{background-color:#ddd}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiTWF0Y2hpbmctQ2FyZHMuc3ZlbHRlIiwic291cmNlcyI6WyJNYXRjaGluZy1DYXJkcy5zdmVsdGUiXSwic291cmNlc0NvbnRlbnQiOlsiPHNjcmlwdD5cbiAgICBsZXQgY2FyZHMgPSA4XG4gICAgLy8gbGV0IHBhaXJzID0gY2FyZHMvMlxuICAgIGxldCBudW1iZXJzID0gQXJyYXkuZnJvbSh7bGVuZ3RoOiBjYXJkc30sIChfLCBpKSA9PiBpICsgMSlcbiAgICBsZXQgcGlja2VkTnVtLCByYW5kb21OdW1cbiAgICBsZXQgc2h1ZmZsZU51bWJlcnMgPSBbXVxuICAgIFxuICAgIGZvcihsZXQgaT0wOyBpPGNhcmRzOyBpKyspIHtcbiAgICAgICAgcmFuZG9tTnVtID0gcGFyc2VJbnQoTWF0aC5yYW5kb20oKSAqIG51bWJlcnMubGVuZ3RoKSArIDFcbiAgICAgICAgcGlja2VkTnVtID0gbnVtYmVyc1tyYW5kb21OdW1dXG4gICAgICAgIG51bWJlcnMgPSBudW1iZXJzLmZpbHRlcigobikgPT4geyByZXR1cm4gbiAhPSBwaWNrZWROdW0gfSlcbiAgICAgICAgaWYgKHBpY2tlZE51bSAhPSB1bmRlZmluZWQpe1xuICAgICAgICAgICAgc2h1ZmZsZU51bWJlcnMgPSBbLi4uc2h1ZmZsZU51bWJlcnMsIHBpY2tlZE51bV1cbiAgICAgICAgfVxuICAgIH1cbiAgICBcbiAgICBmb3IobGV0IGo9MDsgajxudW1iZXJzLmxlbmd0aDsgaisrKXtcbiAgICAgICAgc2h1ZmZsZU51bWJlcnMucHVzaChudW1iZXJzW2pdKVxuICAgIH1cbjwvc2NyaXB0PlxuXG48ZGl2IGNsYXNzPVwiY29udGFpbmVyXCI+XG4gICAgPGRpdiBjbGFzcz1cImNhcmQtd3JhcFwiPlxuICAgICAgICB7I2VhY2ggc2h1ZmZsZU51bWJlcnMgYXMgc2h1ZmZsZU51bWJlcn1cbiAgICAgICAgICAgIDxkaXYgY2xhc3M9XCJjYXJkLWl0ZW1cIiBkYXRhLWF0dHI9e3NodWZmbGVOdW1iZXJ9Pnsgc2h1ZmZsZU51bWJlciB9PC9kaXY+XG4gICAgICAgIHsvZWFjaH1cbiAgICA8L2Rpdj5cbjwvZGl2PlxuXG48c3R5bGUgbGFuZz1cInNjc3NcIj4uY29udGFpbmVyIHtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgbWluLWhlaWdodDogMTAwdmg7XG59XG5cbi5jYXJkLXdyYXAge1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LXdyYXA6IHdyYXA7XG4gIGp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjtcbiAgbWFyZ2luOiBhdXRvO1xuICB3aWR0aDogNTB2dztcbiAgaGVpZ2h0OiA1MHZoO1xufVxuXG4uY2FyZC1pdGVtIHtcbiAgZGlzcGxheTogZmxleDtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIHdpZHRoOiBjYWxjKDI1JSAtIDVweCk7XG4gIGhlaWdodDogY2FsYyg1MCUgLSAxMHB4KTtcbiAgYmFja2dyb3VuZC1jb2xvcjogIzIyMjtcbiAgZm9udC1zaXplOiAyMHB4O1xuICBjb2xvcjogI2ZmZjtcbiAgY3Vyc29yOiBwb2ludGVyO1xufVxuLmNhcmQtaXRlbTpob3ZlciB7XG4gIGJhY2tncm91bmQtY29sb3I6ICNkZGQ7XG59PC9zdHlsZT5cbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUE2Qm1CLFVBQVUsZUFBQyxDQUFDLEFBQzdCLE9BQU8sQ0FBRSxJQUFJLENBQ2IsY0FBYyxDQUFFLE1BQU0sQ0FDdEIsVUFBVSxDQUFFLEtBQUssQUFDbkIsQ0FBQyxBQUVELFVBQVUsZUFBQyxDQUFDLEFBQ1YsT0FBTyxDQUFFLElBQUksQ0FDYixTQUFTLENBQUUsSUFBSSxDQUNmLGVBQWUsQ0FBRSxhQUFhLENBQzlCLE1BQU0sQ0FBRSxJQUFJLENBQ1osS0FBSyxDQUFFLElBQUksQ0FDWCxNQUFNLENBQUUsSUFBSSxBQUNkLENBQUMsQUFFRCxVQUFVLGVBQUMsQ0FBQyxBQUNWLE9BQU8sQ0FBRSxJQUFJLENBQ2IsZUFBZSxDQUFFLE1BQU0sQ0FDdkIsV0FBVyxDQUFFLE1BQU0sQ0FDbkIsT0FBTyxDQUFFLElBQUksQ0FDYixLQUFLLENBQUUsS0FBSyxHQUFHLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUN0QixNQUFNLENBQUUsS0FBSyxHQUFHLENBQUMsQ0FBQyxDQUFDLElBQUksQ0FBQyxDQUN4QixnQkFBZ0IsQ0FBRSxJQUFJLENBQ3RCLFNBQVMsQ0FBRSxJQUFJLENBQ2YsS0FBSyxDQUFFLElBQUksQ0FDWCxNQUFNLENBQUUsT0FBTyxBQUNqQixDQUFDLEFBQ0QseUJBQVUsTUFBTSxBQUFDLENBQUMsQUFDaEIsZ0JBQWdCLENBQUUsSUFBSSxBQUN4QixDQUFDIn0= */";
-    	append_dev(document.head, style);
+    	style.id = "svelte-1t83b0s-style";
+    	style.textContent = ".container.svelte-1t83b0s{display:flex;flex-direction:column;min-height:100vh}.card-wrap.svelte-1t83b0s{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin:auto;width:100vw;height:100vh}.card-item.svelte-1t83b0s{display:flex;justify-content:center;align-items:center;display:flex;width:calc(25% - 5px);height:calc(50% - 10px);background-color:#222;font-size:0px;color:#fff;cursor:pointer;transition:all 0.35s}.card-item.svelte-1t83b0s:hover{font-size:32px;background-color:#333}.card-item.is-open.svelte-1t83b0s{background-color:#ddd;color:red}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiTWF0Y2hpbmctQ2FyZHMuc3ZlbHRlIiwic291cmNlcyI6WyJNYXRjaGluZy1DYXJkcy5zdmVsdGUiXSwic291cmNlc0NvbnRlbnQiOlsiPHNjcmlwdD5cbiAgICBsZXQgY2FyZHMgPSA4XG4gICAgbGV0IGRhdGEgPSBbXG4gICAgICAgIHsgaWQ6IDEsIHZhbHVlOiAxLCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDIsIHZhbHVlOiAxLCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDMsIHZhbHVlOiAyLCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDQsIHZhbHVlOiAyLCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDUsIHZhbHVlOiAzLCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDYsIHZhbHVlOiAzLCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDcsIHZhbHVlOiA0LCBpbWc6ICcnIH0sXG4gICAgICAgIHsgaWQ6IDgsIHZhbHVlOiA0LCBpbWc6ICcnIH1cbiAgICBdXG4gICAgbGV0IHBpY2tlZE51bSwgcmFuZG9tTnVtXG4gICAgbGV0IHNodWZmbGVEYXRhID0gW11cblxuICAgIGxldCBzZWxlY3RlZENhcmRzID0gW11cbiAgICBsZXQgc2VsZWN0ZWROdW1zID0gW11cbiAgICBsZXQgc3VtLCBpc09wZW5cbiAgICBcbiAgICBmdW5jdGlvbiBzaHVmZmxlQ2FyZHMoKSB7XG4gICAgICAgIGZvcihsZXQgaT0wOyBpPGNhcmRzOyBpKyspIHtcbiAgICAgICAgICAgIHJhbmRvbU51bSA9IHBhcnNlSW50KE1hdGgucmFuZG9tKCkgKiBkYXRhLmxlbmd0aClcbiAgICAgICAgICAgIHBpY2tlZE51bSA9IGRhdGFbcmFuZG9tTnVtXVxuICAgICAgICAgICAgc2h1ZmZsZURhdGEgPSBbLi4uc2h1ZmZsZURhdGEsIHBpY2tlZE51bV1cbiAgICAgICAgICAgIGRhdGEuc3BsaWNlKHJhbmRvbU51bSwgMSk7XG4gICAgICAgIH1cbiAgICB9XG5cbiAgICBzaHVmZmxlQ2FyZHMoKVxuICAgICAgICBcbiAgICBmdW5jdGlvbiBjbGlja0NhcmQoaWQsIHZhbHVlKXtcbiAgICAgICAgaWYgKHNlbGVjdGVkQ2FyZHMubGVuZ3RoPDIpIHtcbiAgICAgICAgICAgIHNlbGVjdGVkQ2FyZHMgPSBbLi4uc2VsZWN0ZWRDYXJkcywgdmFsdWVdXG4gICAgICAgICAgICBzZWxlY3RlZE51bXMgPSBbLi4uc2VsZWN0ZWROdW1zLCBpZF1cbiAgICAgICAgfVxuICAgICAgICBlbHNlIHtcbiAgICAgICAgICAgIHNlbGVjdGVkQ2FyZHMgPSBbdmFsdWVdXG4gICAgICAgICAgICBzZWxlY3RlZE51bXMgPSBbaWRdXG4gICAgICAgIH1cbiAgICAgICAgY2hlY2tDYXJkKGlkKVxuICAgIH1cblxuICAgIGZ1bmN0aW9uIGNoZWNrQ2FyZChpZCkge1xuICAgICAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuY2FyZC1pdGVtW2RhdGEtaW5kZXg9XCInKyBpZCArJ1wiXScpLmNsYXNzTGlzdC5hZGQoJ2lzLW9wZW4nKVxuICAgICAgICBsZXQgZmxpcEJhY2sgPSBzZXRUaW1lb3V0KGZ1bmN0aW9uKCl7XG4gICAgICAgICAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuY2FyZC1pdGVtW2RhdGEtaW5kZXg9XCInKyBpZCArJ1wiXScpLmNsYXNzTGlzdC5yZW1vdmUoJ2lzLW9wZW4nKVxuICAgICAgICB9LDUwMClcbiAgICAgICAgXG4gICAgICAgIGlmIChzZWxlY3RlZENhcmRzLmxlbmd0aD09MikgeyAgICAgICAgICAgIFxuICAgICAgICAgICAgaWYgKHNlbGVjdGVkQ2FyZHNbMF0gPT09IHNlbGVjdGVkQ2FyZHNbMV0pIHtcbiAgICAgICAgICAgICAgICBjb25zb2xlLmxvZygnQ29ycmVjdCEnKVxuICAgICAgICAgICAgICAgIGNvbnNvbGUubG9nKHNlbGVjdGVkTnVtc1swXSwgc2VsZWN0ZWROdW1zWzFdKVxuICAgICAgICAgICAgfVxuICAgICAgICAgICAgZWxzZSB7XG4gICAgICAgICAgICAgICAgY29uc29sZS5sb2coJ05vdCBDb3JyZWN0IScpXG4gICAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICB9XG5cbjwvc2NyaXB0PlxuXG48ZGl2IGNsYXNzPVwiY29udGFpbmVyXCI+XG4gICAgPHVsIGNsYXNzPVwiY2FyZC13cmFwXCI+XG4gICAgICAgIHsjZWFjaCBzaHVmZmxlRGF0YSBhcyBzaHVmZmxlLCBpbmRleCAoc2h1ZmZsZSl9XG4gICAgICAgICAgICA8bGkgY2xhc3M9XCJjYXJkLWl0ZW1cIlxuICAgICAgICAgICAgICAgIGNsYXNzOmlzLW9wZW49eyBpc09wZW4gfVxuICAgICAgICAgICAgICAgIGRhdGEtaW5kZXg9eyBpbmRleCsxIH1cbiAgICAgICAgICAgICAgICBvbjpjbGljaz17KCkgPT4gY2xpY2tDYXJkKGluZGV4KzEsIHNodWZmbGUudmFsdWUpfT57IHNodWZmbGUudmFsdWUgfTwvbGk+XG4gICAgICAgIHsvZWFjaH1cbiAgICA8L3VsPlxuPC9kaXY+XG5cbjxzdHlsZSBsYW5nPVwic2Nzc1wiPi5jb250YWluZXIge1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICBtaW4taGVpZ2h0OiAxMDB2aDtcbn1cblxuLmNhcmQtd3JhcCB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtd3JhcDogd3JhcDtcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBtYXJnaW46IGF1dG87XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbn1cblxuLmNhcmQtaXRlbSB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBkaXNwbGF5OiBmbGV4O1xuICB3aWR0aDogY2FsYygyNSUgLSA1cHgpO1xuICBoZWlnaHQ6IGNhbGMoNTAlIC0gMTBweCk7XG4gIGJhY2tncm91bmQtY29sb3I6ICMyMjI7XG4gIGZvbnQtc2l6ZTogMHB4O1xuICBjb2xvcjogI2ZmZjtcbiAgY3Vyc29yOiBwb2ludGVyO1xuICB0cmFuc2l0aW9uOiBhbGwgMC4zNXM7XG59XG4uY2FyZC1pdGVtOmhvdmVyIHtcbiAgZm9udC1zaXplOiAzMnB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjMzMzO1xufVxuLmNhcmQtaXRlbS5pcy1vcGVuIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2RkZDtcbiAgY29sb3I6IHJlZDtcbn08L3N0eWxlPlxuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQXdFbUIsVUFBVSxlQUFDLENBQUMsQUFDN0IsT0FBTyxDQUFFLElBQUksQ0FDYixjQUFjLENBQUUsTUFBTSxDQUN0QixVQUFVLENBQUUsS0FBSyxBQUNuQixDQUFDLEFBRUQsVUFBVSxlQUFDLENBQUMsQUFDVixPQUFPLENBQUUsSUFBSSxDQUNiLFNBQVMsQ0FBRSxJQUFJLENBQ2YsZUFBZSxDQUFFLGFBQWEsQ0FDOUIsV0FBVyxDQUFFLE1BQU0sQ0FDbkIsTUFBTSxDQUFFLElBQUksQ0FDWixLQUFLLENBQUUsS0FBSyxDQUNaLE1BQU0sQ0FBRSxLQUFLLEFBQ2YsQ0FBQyxBQUVELFVBQVUsZUFBQyxDQUFDLEFBQ1YsT0FBTyxDQUFFLElBQUksQ0FDYixlQUFlLENBQUUsTUFBTSxDQUN2QixXQUFXLENBQUUsTUFBTSxDQUNuQixPQUFPLENBQUUsSUFBSSxDQUNiLEtBQUssQ0FBRSxLQUFLLEdBQUcsQ0FBQyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQ3RCLE1BQU0sQ0FBRSxLQUFLLEdBQUcsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDLENBQ3hCLGdCQUFnQixDQUFFLElBQUksQ0FDdEIsU0FBUyxDQUFFLEdBQUcsQ0FDZCxLQUFLLENBQUUsSUFBSSxDQUNYLE1BQU0sQ0FBRSxPQUFPLENBQ2YsVUFBVSxDQUFFLEdBQUcsQ0FBQyxLQUFLLEFBQ3ZCLENBQUMsQUFDRCx5QkFBVSxNQUFNLEFBQUMsQ0FBQyxBQUNoQixTQUFTLENBQUUsSUFBSSxDQUNmLGdCQUFnQixDQUFFLElBQUksQUFDeEIsQ0FBQyxBQUNELFVBQVUsUUFBUSxlQUFDLENBQUMsQUFDbEIsZ0JBQWdCLENBQUUsSUFBSSxDQUN0QixLQUFLLENBQUUsR0FBRyxBQUNaLENBQUMifQ== */";
+    	append_dev(document_1.head, style);
     }
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
+    	child_ctx[13] = list[i];
+    	child_ctx[15] = i;
     	return child_ctx;
     }
 
-    // (24:8) {#each shuffleNumbers as shuffleNumber}
-    function create_each_block(ctx) {
-    	let div;
-    	let t_value = /*shuffleNumber*/ ctx[5] + "";
+    // (64:8) {#each shuffleData as shuffle, index (shuffle)}
+    function create_each_block(key_1, ctx) {
+    	let li;
+    	let t_value = /*shuffle*/ ctx[13].value + "";
     	let t;
-    	let div_data_attr_value;
+    	let li_data_index_value;
+    	let mounted;
+    	let dispose;
+
+    	function click_handler(...args) {
+    		return /*click_handler*/ ctx[3](/*index*/ ctx[15], /*shuffle*/ ctx[13], ...args);
+    	}
 
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
-    			div = element("div");
+    			li = element("li");
     			t = text(t_value);
-    			attr_dev(div, "class", "card-item svelte-1e182cq");
-    			attr_dev(div, "data-attr", div_data_attr_value = /*shuffleNumber*/ ctx[5]);
-    			add_location(div, file, 24, 12, 711);
+    			attr_dev(li, "class", "card-item svelte-1t83b0s");
+    			attr_dev(li, "data-index", li_data_index_value = /*index*/ ctx[15] + 1);
+    			toggle_class(li, "is-open", /*isOpen*/ ctx[1]);
+    			add_location(li, file, 64, 12, 1841);
+    			this.first = li;
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, t);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*shuffleNumbers*/ 1 && t_value !== (t_value = /*shuffleNumber*/ ctx[5] + "")) set_data_dev(t, t_value);
+    			insert_dev(target, li, anchor);
+    			append_dev(li, t);
 
-    			if (dirty & /*shuffleNumbers*/ 1 && div_data_attr_value !== (div_data_attr_value = /*shuffleNumber*/ ctx[5])) {
-    				attr_dev(div, "data-attr", div_data_attr_value);
+    			if (!mounted) {
+    				dispose = listen_dev(li, "click", click_handler, false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			if (dirty & /*shuffleData*/ 1 && t_value !== (t_value = /*shuffle*/ ctx[13].value + "")) set_data_dev(t, t_value);
+
+    			if (dirty & /*shuffleData*/ 1 && li_data_index_value !== (li_data_index_value = /*index*/ ctx[15] + 1)) {
+    				attr_dev(li, "data-index", li_data_index_value);
+    			}
+
+    			if (dirty & /*isOpen*/ 2) {
+    				toggle_class(li, "is-open", /*isOpen*/ ctx[1]);
     			}
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(li);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -392,7 +526,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(24:8) {#each shuffleNumbers as shuffleNumber}",
+    		source: "(64:8) {#each shuffleData as shuffle, index (shuffle)}",
     		ctx
     	});
 
@@ -400,71 +534,62 @@ var app = (function () {
     }
 
     function create_fragment(ctx) {
-    	let div1;
-    	let div0;
-    	let each_value = /*shuffleNumbers*/ ctx[0];
-    	validate_each_argument(each_value);
+    	let div;
+    	let ul;
     	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let each_value = /*shuffleData*/ ctx[0];
+    	validate_each_argument(each_value);
+    	const get_key = ctx => /*shuffle*/ ctx[13];
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
     	}
 
     	const block = {
     		c: function create() {
-    			div1 = element("div");
-    			div0 = element("div");
+    			div = element("div");
+    			ul = element("ul");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(div0, "class", "card-wrap svelte-1e182cq");
-    			add_location(div0, file, 22, 4, 627);
-    			attr_dev(div1, "class", "container svelte-1e182cq");
-    			add_location(div1, file, 21, 0, 599);
+    			attr_dev(ul, "class", "card-wrap svelte-1t83b0s");
+    			add_location(ul, file, 62, 4, 1750);
+    			attr_dev(div, "class", "container svelte-1t83b0s");
+    			add_location(div, file, 61, 0, 1722);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div1, anchor);
-    			append_dev(div1, div0);
+    			insert_dev(target, div, anchor);
+    			append_dev(div, ul);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div0, null);
+    				each_blocks[i].m(ul, null);
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*shuffleNumbers*/ 1) {
-    				each_value = /*shuffleNumbers*/ ctx[0];
+    			if (dirty & /*shuffleData, isOpen, clickCard*/ 7) {
+    				const each_value = /*shuffleData*/ ctx[0];
     				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(div0, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, ul, destroy_block, create_each_block, null, get_each_context);
     			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div1);
-    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
     		}
     	};
 
@@ -484,62 +609,112 @@ var app = (function () {
     	validate_slots("Matching_Cards", slots, []);
     	let cards = 8;
 
-    	// let pairs = cards/2
-    	let numbers = Array.from({ length: cards }, (_, i) => i + 1);
+    	let data = [
+    		{ id: 1, value: 1, img: "" },
+    		{ id: 2, value: 1, img: "" },
+    		{ id: 3, value: 2, img: "" },
+    		{ id: 4, value: 2, img: "" },
+    		{ id: 5, value: 3, img: "" },
+    		{ id: 6, value: 3, img: "" },
+    		{ id: 7, value: 4, img: "" },
+    		{ id: 8, value: 4, img: "" }
+    	];
 
     	let pickedNum, randomNum;
-    	let shuffleNumbers = [];
+    	let shuffleData = [];
+    	let selectedCards = [];
+    	let selectedNums = [];
+    	let sum, isOpen;
 
-    	for (let i = 0; i < cards; i++) {
-    		randomNum = parseInt(Math.random() * numbers.length) + 1;
-    		pickedNum = numbers[randomNum];
-
-    		numbers = numbers.filter(n => {
-    			return n != pickedNum;
-    		});
-
-    		if (pickedNum != undefined) {
-    			shuffleNumbers = [...shuffleNumbers, pickedNum];
+    	function shuffleCards() {
+    		for (let i = 0; i < cards; i++) {
+    			randomNum = parseInt(Math.random() * data.length);
+    			pickedNum = data[randomNum];
+    			$$invalidate(0, shuffleData = [...shuffleData, pickedNum]);
+    			data.splice(randomNum, 1);
     		}
     	}
 
-    	for (let j = 0; j < numbers.length; j++) {
-    		shuffleNumbers.push(numbers[j]);
+    	shuffleCards();
+
+    	function clickCard(id, value) {
+    		if (selectedCards.length < 2) {
+    			selectedCards = [...selectedCards, value];
+    			selectedNums = [...selectedNums, id];
+    		} else {
+    			selectedCards = [value];
+    			selectedNums = [id];
+    		}
+
+    		checkCard(id);
+    	}
+
+    	function checkCard(id) {
+    		document.querySelector(".card-item[data-index=\"" + id + "\"]").classList.add("is-open");
+
+    		let flipBack = setTimeout(
+    			function () {
+    				document.querySelector(".card-item[data-index=\"" + id + "\"]").classList.remove("is-open");
+    			},
+    			500
+    		);
+
+    		if (selectedCards.length == 2) {
+    			if (selectedCards[0] === selectedCards[1]) {
+    				console.log("Correct!");
+    				console.log(selectedNums[0], selectedNums[1]);
+    			} else {
+    				console.log("Not Correct!");
+    			}
+    		}
     	}
 
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Matching_Cards> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<Matching_Cards> was created with unknown prop '${key}'`);
     	});
+
+    	const click_handler = (index, shuffle) => clickCard(index + 1, shuffle.value);
 
     	$$self.$capture_state = () => ({
     		cards,
-    		numbers,
+    		data,
     		pickedNum,
     		randomNum,
-    		shuffleNumbers
+    		shuffleData,
+    		selectedCards,
+    		selectedNums,
+    		sum,
+    		isOpen,
+    		shuffleCards,
+    		clickCard,
+    		checkCard
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("cards" in $$props) cards = $$props.cards;
-    		if ("numbers" in $$props) numbers = $$props.numbers;
+    		if ("data" in $$props) data = $$props.data;
     		if ("pickedNum" in $$props) pickedNum = $$props.pickedNum;
     		if ("randomNum" in $$props) randomNum = $$props.randomNum;
-    		if ("shuffleNumbers" in $$props) $$invalidate(0, shuffleNumbers = $$props.shuffleNumbers);
+    		if ("shuffleData" in $$props) $$invalidate(0, shuffleData = $$props.shuffleData);
+    		if ("selectedCards" in $$props) selectedCards = $$props.selectedCards;
+    		if ("selectedNums" in $$props) selectedNums = $$props.selectedNums;
+    		if ("sum" in $$props) sum = $$props.sum;
+    		if ("isOpen" in $$props) $$invalidate(1, isOpen = $$props.isOpen);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [shuffleNumbers];
+    	return [shuffleData, isOpen, clickCard, click_handler];
     }
 
     class Matching_Cards extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		if (!document.getElementById("svelte-1e182cq-style")) add_css();
+    		if (!document_1.getElementById("svelte-1t83b0s-style")) add_css();
     		init(this, options, instance, create_fragment, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
