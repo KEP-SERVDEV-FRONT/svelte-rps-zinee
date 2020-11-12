@@ -1,17 +1,17 @@
 <script>
     let data = [
-        { value: 1, img: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/IU_MelOn_Music_Awards_2017_06.jpg' },
-        { value: 1, img: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/IU_MelOn_Music_Awards_2017_06.jpg' },
-        { value: 2, img: 'https://image.bugsm.co.kr/artist/images/1000/800491/80049126.jpg' },
-        { value: 2, img: 'https://image.bugsm.co.kr/artist/images/1000/800491/80049126.jpg' },
-        { value: 3, img: 'https://image.news1.kr/system/photos/2020/2/18/4059225/article.jpg/dims/optimize' },
-        { value: 3, img: 'https://image.news1.kr/system/photos/2020/2/18/4059225/article.jpg/dims/optimize' },
-        { value: 4, img: 'https://dimg.donga.com/wps/NEWS/IMAGE/2019/12/31/99024137.2.jpg' },
-        { value: 4, img: 'https://dimg.donga.com/wps/NEWS/IMAGE/2019/12/31/99024137.2.jpg' },
-        { value: 5, img: 'https://i.pinimg.com/originals/79/45/8f/79458f79fcdf5d9345a86faf430c2091.jpg' },
-        { value: 5, img: 'https://i.pinimg.com/originals/79/45/8f/79458f79fcdf5d9345a86faf430c2091.jpg' },
-        { value: 6, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTctk0e9mHVkoma-l50iIqnlVCGyOmW2LaXEA&usqp=CAU' },
-        { value: 6, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTctk0e9mHVkoma-l50iIqnlVCGyOmW2LaXEA&usqp=CAU' }
+        { value: 1, img: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/IU_MelOn_Music_Awards_2017_06.jpg', isOpen: false },
+        { value: 1, img: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/IU_MelOn_Music_Awards_2017_06.jpg', isOpen: false },
+        { value: 2, img: 'https://image.bugsm.co.kr/artist/images/1000/800491/80049126.jpg', isOpen: false },
+        { value: 2, img: 'https://image.bugsm.co.kr/artist/images/1000/800491/80049126.jpg', isOpen: false },
+        { value: 3, img: 'https://image.news1.kr/system/photos/2020/2/18/4059225/article.jpg/dims/optimize', isOpen: false },
+        { value: 3, img: 'https://image.news1.kr/system/photos/2020/2/18/4059225/article.jpg/dims/optimize', isOpen: false },
+        { value: 4, img: 'https://dimg.donga.com/wps/NEWS/IMAGE/2019/12/31/99024137.2.jpg', isOpen: false },
+        { value: 4, img: 'https://dimg.donga.com/wps/NEWS/IMAGE/2019/12/31/99024137.2.jpg', isOpen: false },
+        { value: 5, img: 'https://i.pinimg.com/originals/79/45/8f/79458f79fcdf5d9345a86faf430c2091.jpg', isOpen: false },
+        { value: 5, img: 'https://i.pinimg.com/originals/79/45/8f/79458f79fcdf5d9345a86faf430c2091.jpg', isOpen: false },
+        { value: 6, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTctk0e9mHVkoma-l50iIqnlVCGyOmW2LaXEA&usqp=CAU', isOpen: false },
+        { value: 6, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTctk0e9mHVkoma-l50iIqnlVCGyOmW2LaXEA&usqp=CAU', isOpen: false }
     ]
     let cards = data.length
     let pickedNum, randomNum
@@ -112,7 +112,6 @@
         font-size: 0px;
         color: #fff;
         cursor: pointer;
-        transition: all 0.35s;
         &::after {
             content: '';
             position: absolute;
@@ -122,7 +121,7 @@
             width: 100%;
             height: 100%;
             background-color: #222;
-            transition: all 0.35s;
+            transition: all 0.5s linear;
         }
         &:hover {
             &::after {
